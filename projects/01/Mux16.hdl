@@ -1,0 +1,180 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/01/Mux16.hdl
+
+/**
+ * 16-bit multiplexor: 
+ * for i = 0..15 out[i] = a[i] if sel == 0 
+ *                        b[i] if sel == 1
+ */
+
+CHIP Mux16 {
+    IN a[16], b[16], sel;
+    OUT out[16];
+
+    PARTS:
+    // Put your code here:
+    Nand(a=sel, b=sel, out=notsel);
+    //and a,notsel
+    Nand(a=a[0], b=notsel, out=tmpa);
+    Nand(a=tmpa, b=tmpa, out=muxa);
+    //and b, notsel
+    Nand(a=b[0], b=sel, out=tmpb);
+    Nand(a=tmpb, b=tmpb, out=muxb);
+    //or
+    Nand(a=muxa, b=muxa, out=notmuxa);
+    Nand(a=muxb, b=muxb, out=notmuxb);
+    Nand(a=notmuxa, b=notmuxb, out=out[0]);
+
+    Nand(a=a[1], b=notsel, out=atmpa);
+    Nand(a=atmpa, b=atmpa, out=amuxa);
+    //and b, notsel
+    Nand(a=b[1], b=sel, out=atmpb);
+    Nand(a=atmpb, b=atmpb, out=amuxb);
+    //or
+    Nand(a=amuxa, b=amuxa, out=anmuxa);
+    Nand(a=amuxb, b=amuxb, out=anmuxb);
+    Nand(a=anmuxa, b=anmuxb, out=out[1]);
+
+    Nand(a=a[2], b=notsel, out=btmpa);
+    Nand(a=btmpa, b=btmpa, out=bmuxa);
+    //and b, notsel
+    Nand(a=b[2], b=sel, out=btmpb);
+    Nand(a=btmpb, b=btmpb, out=bmuxb);
+    //or
+    Nand(a=bmuxa, b=bmuxa, out=bnmuxa);
+    Nand(a=bmuxb, b=bmuxb, out=bnmuxb);
+    Nand(a=bnmuxa, b=bnmuxb, out=out[2]);
+
+    Nand(a=a[3], b=notsel, out=ctmpa);
+    Nand(a=ctmpa, b=ctmpa, out=cmuxa);
+    //and b, notsel
+    Nand(a=b[3], b=sel, out=ctmpb);
+    Nand(a=ctmpb, b=ctmpb, out=cmuxb);
+    //or
+    Nand(a=cmuxa, b=cmuxa, out=cnmuxa);
+    Nand(a=cmuxb, b=cmuxb, out=cnmuxb);
+    Nand(a=cnmuxa, b=cnmuxb, out=out[3]);
+
+    Nand(a=a[4], b=notsel, out=dtmpa);
+    Nand(a=dtmpa, b=dtmpa, out=dmuxa);
+    //and b, notsel
+    Nand(a=b[4], b=sel, out=dtmpb);
+    Nand(a=dtmpb, b=dtmpb, out=dmuxb);
+    //or
+    Nand(a=dmuxa, b=dmuxa, out=dnmuxa);
+    Nand(a=dmuxb, b=dmuxb, out=dnmuxb);
+    Nand(a=dnmuxa, b=dnmuxb, out=out[4]);
+
+    Nand(a=a[5], b=notsel, out=etmpa);
+    Nand(a=etmpa, b=etmpa, out=emuxa);
+    //and b, notsel
+    Nand(a=b[5], b=sel, out=etmpb);
+    Nand(a=etmpb, b=etmpb, out=emuxb);
+    //or
+    Nand(a=emuxa, b=emuxa, out=enmuxa);
+    Nand(a=emuxb, b=emuxb, out=enmuxb);
+    Nand(a=enmuxa, b=enmuxb, out=out[5]);
+
+    Nand(a=a[6], b=notsel, out=ftmpa);
+    Nand(a=ftmpa, b=ftmpa, out=fmuxa);
+    //and b, notsel
+    Nand(a=b[6], b=sel, out=ftmpb);
+    Nand(a=ftmpb, b=ftmpb, out=fmuxb);
+    //or
+    Nand(a=fmuxa, b=fmuxa, out=fnmuxa);
+    Nand(a=fmuxb, b=fmuxb, out=fnmuxb);
+    Nand(a=fnmuxa, b=fnmuxb, out=out[6]);
+
+    Nand(a=a[7], b=notsel, out=gtmpa);
+    Nand(a=gtmpa, b=gtmpa, out=gmuxa);
+    //and b, notsel
+    Nand(a=b[7], b=sel, out=gtmpb);
+    Nand(a=gtmpb, b=gtmpb, out=gmuxb);
+    //or
+    Nand(a=gmuxa, b=gmuxa, out=gnmuxa);
+    Nand(a=gmuxb, b=gmuxb, out=gnmuxb);
+    Nand(a=gnmuxa, b=gnmuxb, out=out[7]);
+
+    Nand(a=a[8], b=notsel, out=htmpa);
+    Nand(a=htmpa, b=htmpa, out=hmuxa);
+    //and b, notsel
+    Nand(a=b[8], b=sel, out=htmpb);
+    Nand(a=htmpb, b=htmpb, out=hmuxb);
+    //or
+    Nand(a=hmuxa, b=hmuxa, out=hnmuxa);
+    Nand(a=hmuxb, b=hmuxb, out=hnmuxb);
+    Nand(a=hnmuxa, b=hnmuxb, out=out[8]);
+
+    Nand(a=a[9], b=notsel, out=itmpa);
+    Nand(a=itmpa, b=itmpa, out=imuxa);
+    //and b, notsel
+    Nand(a=b[9], b=sel, out=itmpb);
+    Nand(a=itmpb, b=itmpb, out=imuxb);
+    //or
+    Nand(a=imuxa, b=imuxa, out=inmuxa);
+    Nand(a=imuxb, b=imuxb, out=inmuxb);
+    Nand(a=inmuxa, b=inmuxb, out=out[9]);
+
+    Nand(a=a[10], b=notsel, out=jtmpa);
+    Nand(a=jtmpa, b=jtmpa, out=jmuxa);
+    //and b, notsel
+    Nand(a=b[10], b=sel, out=jtmpb);
+    Nand(a=jtmpb, b=jtmpb, out=jmuxb);
+    //or
+    Nand(a=jmuxa, b=jmuxa, out=jnmuxa);
+    Nand(a=jmuxb, b=jmuxb, out=jnmuxb);
+    Nand(a=jnmuxa, b=jnmuxb, out=out[10]);
+
+    Nand(a=a[11], b=notsel, out=ktmpa);
+    Nand(a=ktmpa, b=ktmpa, out=kmuxa);
+    //and b, notsel
+    Nand(a=b[11], b=sel, out=ktmpb);
+    Nand(a=ktmpb, b=ktmpb, out=kmuxb);
+    //or
+    Nand(a=kmuxa, b=kmuxa, out=knmuxa);
+    Nand(a=kmuxb, b=kmuxb, out=knmuxb);
+    Nand(a=knmuxa, b=knmuxb, out=out[11]);
+
+    Nand(a=a[12], b=notsel, out=ltmpa);
+    Nand(a=ltmpa, b=ltmpa, out=lmuxa);
+    //and b, notsel
+    Nand(a=b[12], b=sel, out=ltmpb);
+    Nand(a=ltmpb, b=ltmpb, out=lmuxb);
+    //or
+    Nand(a=lmuxa, b=lmuxa, out=lnmuxa);
+    Nand(a=lmuxb, b=lmuxb, out=lnmuxb);
+    Nand(a=lnmuxa, b=lnmuxb, out=out[12]);
+
+    Nand(a=a[13], b=notsel, out=mtmpa);
+    Nand(a=mtmpa, b=mtmpa, out=mmuxa);
+    //and b, notsel
+    Nand(a=b[13], b=sel, out=mtmpb);
+    Nand(a=mtmpb, b=mtmpb, out=mmuxb);
+    //or
+    Nand(a=mmuxa, b=mmuxa, out=mnmuxa);
+    Nand(a=mmuxb, b=mmuxb, out=mnmuxb);
+    Nand(a=mnmuxa, b=mnmuxb, out=out[13]);
+
+    Nand(a=a[14], b=notsel, out=ntmpa);
+    Nand(a=ntmpa, b=ntmpa, out=nmuxa);
+    //and b, notsel
+    Nand(a=b[14], b=sel, out=ntmpb);
+    Nand(a=ntmpb, b=ntmpb, out=nmuxb);
+    //or
+    Nand(a=nmuxa, b=nmuxa, out=nnmuxa);
+    Nand(a=nmuxb, b=nmuxb, out=nnmuxb);
+    Nand(a=nnmuxa, b=nnmuxb, out=out[14]);
+
+    Nand(a=a[15], b=notsel, out=otmpa);
+    Nand(a=otmpa, b=otmpa, out=omuxa);
+    //and b, notsel
+    Nand(a=b[15], b=sel, out=otmpb);
+    Nand(a=otmpb, b=otmpb, out=omuxb);
+    //or
+    Nand(a=omuxa, b=omuxa, out=onmuxa);
+    Nand(a=omuxb, b=omuxb, out=onmuxb);
+    Nand(a=onmuxa, b=onmuxb, out=out[15]);
+
+}
