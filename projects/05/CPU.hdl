@@ -38,6 +38,36 @@ CHIP CPU {
         addressM[15],    // Address in data memory (of M)
         pc[15];          // address of next instruction
 
+
     PARTS:
     // Put your code here:
+
+
+
+
+
+    //とりあえず@1が来た時を考える
+    //C命令->D=A
+    // A(0) or C(1)
+    DMux(in=true, sel=instruction[15], a=Aorder, b=Corder);
+    // C命令 (ALUへの命令)comp領域=6～12 : (レジスタの指定)dest領域=3～5 : (移動先の指定)jmp領域0～2
+    // A命令＝Aレジスタに15bitの値を格納する。定数の格納はこれでしかできない
+
+   // ARegisterへの格納 
+    ARegister(in=instruction[0..14], load=Aorder, out=Areg); // if Aorder==1 ARegister=instruction
+    //comp領域11bitでAレジスタか、メモリ入力のどちらを操作するかが決定される。1=メモリ:0=Aレジスタ
+    Mux16(a=Areg, b=inM, sel=instruction[12], out=inALU);
+    //  D=A (comp:0110000)
+    ALU(x=Dreg, y=Areg, zx=instruction[11], nx=instruction[10], zy=instruction[9], ny=instruction[8], f=instruction[7], no=instruction[6], out=reslut, zr=zero, ng=nega);
+    // (dest:010)=in Dregister
+    // DMux8Way(in=true, sel=instruction[3..5], a=nul, b=intoM, c=inD, d=inMD, e=inA, f=inAM, g=inAD, h=inAMD);
+    //d1 = instruction[5]
+    Mux(a=false, b=true, sel=instruction[5], out=inA);
+    Mux(a=false, b=true, sel=instruction[4], out=inD);
+    Mux(a=false, b=true, sel=instruction[3], out=inM);
+    //all 0=null
+    Or(a=inA, b=inD, out=a1);
+    Or(a=a1, b=inM, out=nul);
+    DRegister(in=result, load=inD, out=Dreg);
+
 }

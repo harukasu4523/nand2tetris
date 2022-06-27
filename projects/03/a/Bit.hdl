@@ -15,4 +15,10 @@ CHIP Bit {
 
     PARTS:
     // Put your code here:
+    // 入力の指示がくるまで値を保持し続ける。(= load == 1)
+    // DFF(data flip flop)はクロック入力とデータの入力で
+    // 時間に基づく振る舞いができるようになっている。(1つ前のことを思い出せる)
+
+    Mux(a=fb, b=in, sel=load, out=w1);
+    DFF(in=w1, out=out, out=fb);
 }

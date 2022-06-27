@@ -27,5 +27,20 @@ CHIP Memory {
     OUT out[16];
 
     PARTS:
+    // keyboard range = 0x4000 ~ 0x5FFF
+    //(keyboard)x4000 = 100000000000000 x5FFF=101111111111111 x6000(screen)=110000000000000
     // Put your code here:
+    // select RAM  or etc
+    DMux(in=load, sel=address[14], a=w1, b=w2);
+    RAM16K(in=in, load=w1, address=address[0..13], out=a1);
+    // select Screen or Keyboard
+    DMux(in=w2, sel=address[13], a=sc, b=key);
+    Screen(in=in, load=sc, address=address[0..12], out=a2);
+    Keyboard(out=a3);
+    // output Keyboard or Screen
+    Mux16(a=a2, b=a3, sel=address[13], out=b1);
+    // output etc or RAM
+    Mux16(a=a1, b=b1, sel=address[14], out=out);
+    
+
 }

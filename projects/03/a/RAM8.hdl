@@ -15,5 +15,16 @@ CHIP RAM8 {
     OUT out[16];
 
     PARTS:
-    // Put your code here:
+    // loadがあれば任意の場所にloadの値を入れる。任意のアドレスに書き込みできる。
+    DMux8Way(in=load, sel=address, a=w1, b=w2, c=w3, d=w4, e=w5, f=w6, g=w7, h=w8);
+    Register(in=in, load=w1, out=a1);
+    Register(in=in, load=w2, out=a2);
+    Register(in=in, load=w3, out=a3);
+    Register(in=in, load=w4, out=a4);
+    Register(in=in, load=w5, out=a5);
+    Register(in=in, load=w6, out=a6);
+    Register(in=in, load=w7, out=a7);
+    Register(in=in, load=w8, out=a8);
+    Mux8Way16(a=a1, b=a2, c=a3, d=a4, e=a5, f=a6, g=a7, h=a8, sel=address, out=out);
+
 }

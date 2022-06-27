@@ -13,5 +13,44 @@ CHIP FullAdder {
         carry;   // Left bit of a + b + c
 
     PARTS:
+    // // Simple Answer
+    // HalfAdder (a=a, b=b, sum=s1, carry=c1);
+    // HalfAdder (a=s1, b=c, sum=sum, carry=c2);
+    // Or (a=c1, b=c2, out=carry);
+ 
     // Put you code here:
+    // carry section
+    Not(in=a, out=nota);
+    Not(in=b, out=notb);
+    Not(in=c, out=notc);
+
+    And(a=a, b=b, out=a1);
+    And(a=a1, b=c, out=w1);
+
+    And(a=nota, b=b, out=b1);
+    And(a=b1, b=c, out=w2);
+
+    And(a=a, b=notb, out=c1);
+    And(a=c1, b=c, out=w3);
+    
+    And(a=a1, b=notc, out=w4);
+
+    Or(a=w1, b=w2, out=tmp1);
+    Or(a=tmp1, b=w3, out=tmp2);
+    Or(a=tmp2, b=w4, out=carry);
+
+    // sam section
+    And(a=nota, b=notb, out=a2);
+    And(a=a2, b=c, out=s1);
+
+    And(a=a, b=notb, out=b2);
+    And(a=b2, b=notc, out=s2);
+
+    And(a=nota, b=b, out=c2);
+    And(a=c2, b=notc, out=s3);
+
+    Or(a=s1, b=s2, out=stmp1);
+    Or(a=stmp1, b=s3, out=stmp2);
+    Or(a=stmp2, b=w1, out=sum);
+
 }

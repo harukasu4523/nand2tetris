@@ -17,4 +17,9 @@ CHIP Mux4Way16 {
 
     PARTS:
     // Put your code here:
+    //sel[0]をみればa,bのどちらか、c,dのどちらかを選択しているのがわかるので
+    Mux16(a=a, b=b, sel=sel[0], out=w1);
+    Mux16(a=c, b=d, sel=sel[0], out=w2);
+    //sel[1]をみることでa,cのどちらなのか、b,dのどちらかを判断できる。
+    Mux16(a=w1, b=w2, sel=sel[1], out=out);
 }

@@ -16,4 +16,17 @@ CHIP RAM64 {
 
     PARTS:
     // Put your code here:
+    //addressの上位ビット３桁でどのRAM8にアクセスするかを決定し。
+    //下位ビット3桁でRAM8内のどのレジスタに格納するかを決定する
+    // どこで桁上がりするかに注目すること
+    DMux8Way(in=load, sel=address[3..5], a=s1, b=s2, c=s3, d=s4, e=s5, f=s6, g=s7, h=s8);
+    RAM8(in=in, load=s1, address=address[0..2], out=w1);
+    RAM8(in=in, load=s2, address=address[0..2], out=w2); 
+    RAM8(in=in, load=s3, address=address[0..2], out=w3); 
+    RAM8(in=in, load=s4, address=address[0..2], out=w4); 
+    RAM8(in=in, load=s5, address=address[0..2], out=w5); 
+    RAM8(in=in, load=s6, address=address[0..2], out=w6); 
+    RAM8(in=in, load=s7, address=address[0..2], out=w7); 
+    RAM8(in=in, load=s8, address=address[0..2], out=w8);
+    Mux8Way16(a=w1, b=w2, c=w3, d=w4, e=w5, f=w6, g=w7, h=w8, sel=address[3..5], out=out); 
 }
