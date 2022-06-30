@@ -41,33 +41,106 @@ CHIP CPU {
 
     PARTS:
     // Put your code here:
+    // dest領域とinstruction[15](命令の種類)から格納レジスタを判断する
+    // in D Register
+    And(a=instruction[4], b=instruction[15], out=loadD);
+
+    // in Memory -> CPUの外に処理が流れるので書き込みようの1bit
+    And(a=instruction[3], b=instruction[15], out=writeM);
+
+    // in A Register -> A命令かつ、destの最上位ビットが立っているときに格納
+    Not(in=instruction[15], out=notA);
+    Or(a=instruction[5], b=notA, out=loadA);
+
+    // A Register への格納
+    // A命令ならば値はそのまま　C命令ならばALUの計算結果をAレジスタに入れる
+    Mux16(a=instruction, b=outALU, sel=instruction[15], out=InOrAL);
+
+    // C命令がメモリにたいして操作をおこなう場合Aレジスタに格納した値がアドレスになるのでoutのアドレス抽出もする。
+    // @50
+    // M=A Memory[50]に50が入る
+    ARegister(in=InOrAL, load=loadA, out=outA, out[0..14]=addressM);
+
+    // dest2のbitが立っていればDレジスタに値を格納する。
+    DRegister(in=InOrAL, load=loadD, out=outD);
+
+    // 移動のフラグが立っていればAレジスタの値に飛ぶ
+    PC(in=outA, load=loadPC, inc=true, reset=reset, out[0..14]=pc);
+    
+    // C命令がメモリ操作ならinM、定数の格納ならAレジスタの値を選択する
+    Mux16(a=outA, b=inM, sel=instruction[12], out=AorM);
+
+
+    // ALUの計算
+    // x=Dレジスタへ格納した値 y=メモリかAレジスタの値
+    // 出力はAレジスタへのバックと、メモリのアドレス
+    ALU(
+        x=outD, 
+        y=AorM, 
+        zx=instruction[11], 
+        nx=instruction[10], 
+        zy=instruction[9], 
+        ny=instruction[8], 
+        f=instruction[7], 
+        no=instruction[6], 
+        out=outALU, 
+        out=outM,
+        zr=zero, 
+        ng=nega
+        );
+
+    // jmp命令
+    // out < 0 instruction[2], out == 0 instruction[1], out > 0 instruction[0]
+    // out == 0
+    And(a=zero, b=instruction[1], out=jz);
+
+    // out < 0
+    And(a=nega, b=instruction[2], out=jn);
+
+    // out > 0
+    Not(in=nega, out=nnega);
+    Not(in=zero, out=nzero);
+    And(a=nnega, b=nzero, out=posi);
+    And(a=posi, b=instruction[0], out=jp);
+
+    // (jz or jp or jn) == 1 -> loadPC=1
+    Or(a=jz, b=jn, out=w1);
+    Or(a=w1, b=jp, out=w2);
+
+    // C命令の時のみ有効になるから
+    And(a=instruction[15], b=w2, out=loadPC);
 
 
 
 
+    // //とりあえず@1が来た時を考える
+    // //C命令->D=A
+    // // A(0) or C(1)
+    // DMux(in=true, sel=instruction[15], a=Aorder, b=Corder);
 
-    //とりあえず@1が来た時を考える
-    //C命令->D=A
-    // A(0) or C(1)
-    DMux(in=true, sel=instruction[15], a=Aorder, b=Corder);
-    // C命令 (ALUへの命令)comp領域=6～12 : (レジスタの指定)dest領域=3～5 : (移動先の指定)jmp領域0～2
-    // A命令＝Aレジスタに15bitの値を格納する。定数の格納はこれでしかできない
+    // // C命令 (ALUへの命令)comp領域=6～12 : (レジスタの指定)dest領域=3～5 : (移動先の指定)jmp領域0～2
+    // // A命令＝Aレジスタに15bitの値を格納する。定数の格納はAレジスタでしかできない
 
-   // ARegisterへの格納 
-    ARegister(in=instruction[0..14], load=Aorder, out=Areg); // if Aorder==1 ARegister=instruction
-    //comp領域11bitでAレジスタか、メモリ入力のどちらを操作するかが決定される。1=メモリ:0=Aレジスタ
-    Mux16(a=Areg, b=inM, sel=instruction[12], out=inALU);
-    //  D=A (comp:0110000)
-    ALU(x=Dreg, y=Areg, zx=instruction[11], nx=instruction[10], zy=instruction[9], ny=instruction[8], f=instruction[7], no=instruction[6], out=reslut, zr=zero, ng=nega);
-    // (dest:010)=in Dregister
-    // DMux8Way(in=true, sel=instruction[3..5], a=nul, b=intoM, c=inD, d=inMD, e=inA, f=inAM, g=inAD, h=inAMD);
-    //d1 = instruction[5]
-    Mux(a=false, b=true, sel=instruction[5], out=inA);
-    Mux(a=false, b=true, sel=instruction[4], out=inD);
-    Mux(a=false, b=true, sel=instruction[3], out=inM);
-    //all 0=null
-    Or(a=inA, b=inD, out=a1);
-    Or(a=a1, b=inM, out=nul);
-    DRegister(in=result, load=inD, out=Dreg);
+    // // ARegisterへの格納 
+    // ARegister(in=instruction[0..14], load=Aorder, out=Areg); // if Aorder==1 ARegister=instruction
 
+    // //comp領域11bitでAレジスタか、メモリ入力のどちらを操作するかが決定される。1=メモリ:0=Aレジスタ
+    // Mux16(a=Areg, b=inM, sel=instruction[12], out=inALU);
+
+    // // ALUでの計算
+    // //  D=A (comp:0110000)
+    // // if(out==0) zr = 1 : if (out < 0) ng = 1
+    // ALU(x=Dreg, y=Areg, zx=instruction[11], nx=instruction[10], zy=instruction[9], ny=instruction[8], f=instruction[7], no=instruction[6], out=reslut, zr=zero, ng=nega);
+
+    // // レジスタの選択
+    // // (dest:010)=in Dregister
+    // Mux(a=false, b=Corder, sel=instruction[5], out=inA);
+    // Mux(a=false, b=Corder, sel=instruction[4], out=inD);
+    // Mux(a=false, b=Corder, sel=instruction[3], out=inMem);
+
+    // //all 0=null
+    // Or(a=inA, b=inD, out=a1);
+    // Or(a=a1, b=inM, out=nul);
+    // DRegister(in=result, load=inD, out=Dreg);
+    
 }
