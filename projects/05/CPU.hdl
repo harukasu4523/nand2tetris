@@ -48,21 +48,21 @@ CHIP CPU {
     // in Memory -> CPUの外に処理が流れるので書き込みようの1bit
     And(a=instruction[3], b=instruction[15], out=writeM);
 
-    // in A Register -> A命令かつ、destの最上位ビットが立っているときに格納
+    // in A Register -> C命令かつ,destの最上位ビットが立っていない時のみloadA==0になる
     Not(in=instruction[15], out=notA);
     Or(a=instruction[5], b=notA, out=loadA);
 
     // A Register への格納
     // A命令ならば値はそのまま　C命令ならばALUの計算結果をAレジスタに入れる
-    Mux16(a=instruction, b=outALU, sel=instruction[15], out=InOrAL);
+    Mux16(a=instruction, b=outALU, sel=instruction[15], out=InsOrAL);
 
     // C命令がメモリにたいして操作をおこなう場合Aレジスタに格納した値がアドレスになるのでoutのアドレス抽出もする。
     // @50
     // M=A Memory[50]に50が入る
-    ARegister(in=InOrAL, load=loadA, out=outA, out[0..14]=addressM);
+    ARegister(in=InsOrAL, load=loadA, out=outA, out[0..14]=addressM);
 
     // dest2のbitが立っていればDレジスタに値を格納する。
-    DRegister(in=InOrAL, load=loadD, out=outD);
+    DRegister(in=InsOrAL, load=loadD, out=outD);
 
     // 移動のフラグが立っていればAレジスタの値に飛ぶ
     PC(in=outA, load=loadPC, inc=true, reset=reset, out[0..14]=pc);
