@@ -14,10 +14,10 @@
    M=D
    @SCREEN
    D=A
-   @address
+   @address//9
    M=D
-(LOOP)
-   @address
+(LOOP) 
+   @addres //11
    A=M
    M=-1
    @address
@@ -30,6 +30,6 @@
    MD=M-1
    @LOOP
    D;JGT
-(INFINITE_LOOP)
-   @INFINITE_LOOP
+(INFINITE_LOOP) //23
+   @INFINITE_LOOP //23
    0;JMP
